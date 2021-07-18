@@ -22,12 +22,25 @@ class Game {
 
   start() {
       console.log("Game has started.")
+      this.resizeBoard()
+
+      window.addEventListener('resize', () => this.resizeBoard())
 
       this.drawBoard()
   
       if (this.turn.isBot()) {
         this.playBestMove()
       }
+  }
+
+  resizeBoard() {
+    console.log("resize")
+    const lowest = Math.min(window.innerWidth, window.innerHeight)
+    const boardDimension = lowest * .8
+    console.log(`${boardDimension}px`)
+
+    this.boardElement.style.width = `${boardDimension}px`
+    this.boardElement.style.height = `${boardDimension}px`
   }
 
   end() {
