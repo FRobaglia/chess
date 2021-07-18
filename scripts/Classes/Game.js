@@ -47,7 +47,7 @@ class Game {
     console.log("Game has ended.")
     
     setTimeout(() => {
-      newGame(config.initialBoardMatrix, new Player("bot", "white"), new Player("bot", "black"))
+      newGame(config.initialBoardMatrix, this.white, this.black)
     }, 2000);
   }
 
