@@ -1,0 +1,101 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background: rgb(233, 157, 157)
+}
+
+#board {
+  width: 800px;
+  height: 800px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+
+.square {
+  width: 12.5%;
+  height: 12.5%;
+  display: block;
+  position: relative;
+  transition: .3s ease;
+
+  &::after {
+    visibility: hidden;
+    opacity: 0;
+    content: "";
+    position: absolute;
+    display: block;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 42.5px; height: 42.5px;
+    border-radius: 55px;
+    background: rgb(199, 93, 93);
+    transition: .3s opacity ease;
+  }
+
+  &.highlight::after {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.square-light {
+  background: beige;
+}
+
+.square-dark {
+  background: darkslategrey;
+}
+
+.piece {
+  width: 100%;
+  height: 100%;
+  background-position: 0px 0px;
+  background-size: 600px;
+  background-image: url('../assets/images/pieces-spritesheet.svg');
+}
+
+.piece-empty {
+  background-image: none;
+}
+
+.piece-white {
+  background-position-y: 0px
+}
+
+.piece-black {
+  background-position-y: 100px
+}
+
+.piece-pawn {
+  background-position-x: -500px;
+}
+
+.piece-rook {
+  background-position-x: -400px;
+}
+
+.piece-knight {
+  background-position-x: -300px;
+}
+
+.piece-bishop {
+  background-position-x: -200px;
+}
+
+.piece-queen {
+  background-position-x: -100px;
+}
+
+.piece-king {
+  background-position-x: 0;
+}
