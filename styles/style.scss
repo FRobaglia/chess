@@ -1,3 +1,8 @@
+$body: #c7cde2;
+$squareBlack: #01a3a4;
+$squareWhite: #f7f1e3;
+$highlight: #ff7675;
+
 * {
   margin: 0;
   padding: 0;
@@ -10,7 +15,7 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
-  background: rgb(233, 157, 157)
+  background: $body;
 }
 
 #board {
@@ -18,6 +23,7 @@ body {
   height: 800px;
   display: flex;
   flex-wrap: wrap;
+  box-shadow: 0px 6px 16px rgba(0,0,0,0.2);
 }
 
 
@@ -28,40 +34,52 @@ body {
   position: relative;
   transition: .3s ease;
 
-  &::after {
-    visibility: hidden;
-    opacity: 0;
-    content: "";
-    position: absolute;
-    display: block;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    width: 42.5%; height: 42.5%;
-    border-radius: 50%;
-    background: rgb(199, 93, 93);
-    transition: .3s opacity ease;
-  }
+  // &::after {
+  //   visibility: hidden;
+  //   opacity: 0;
+  //   content: "";
+  //   position: absolute;
+  //   display: block;
+  //   top: 50%; left: 50%;
+  //   transform: translate(-50%, -50%);
+  //   width: 42.5%; height: 42.5%;
+  //   border-radius: 50%;
+  //   background: rgb(199, 93, 93);
+  //   transition: .3s opacity ease;
+  // }
 
-  &.highlight::after {
-    opacity: 1;
-    visibility: visible;
+  // &.highlight::after {
+  //   opacity: 1;
+  //   visibility: visible;
+  // }
+
+  &.highlight {
+    cursor: pointer;
+    background: $highlight;
   }
 }
 
-.square-light {
-  background: beige;
+.square-white {
+  background: $squareWhite;
 }
 
-.square-dark {
-  background: darkslategrey;
+.square-black {
+  background: $squareBlack
 }
 
 .piece {
+  position: absolute;
+  top: 0; left: 0;
   width: 100%;
   height: 100%;
   background-position: 0px 0px;
   background-size: 600%;
   background-image: url('../assets/images/pieces-spritesheet.svg');
+  cursor: pointer;
+
+  &.piece-empty {
+    cursor: inherit;
+  }
 }
 
 .piece-empty {

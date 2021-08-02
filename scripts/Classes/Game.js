@@ -1,5 +1,5 @@
 import Utils from './Utils'
-import Square from './Square'
+import Square from './oldSquare'
 import Player from './Player'
 import config from '../config'
 
@@ -11,6 +11,7 @@ function newGame(matrix, white, black) {
 class Game {
   constructor(matrix, white, black) {
     this.boardElement = document.getElementById('board')
+    this.boardDimension = 0
     this.white = white
     this.black = black
     this.numberMatrix = matrix
@@ -34,10 +35,9 @@ class Game {
   }
 
   resizeBoard() {
-    console.log("resize")
     const lowest = Math.min(window.innerWidth, window.innerHeight)
     const boardDimension = lowest * .8
-    console.log(`${boardDimension}px`)
+    this.boardDimension = boardDimension
 
     this.boardElement.style.width = `${boardDimension}px`
     this.boardElement.style.height = `${boardDimension}px`
@@ -57,45 +57,87 @@ class Game {
       const rowArray = []
       this.matrix.push(rowArray)
       row.forEach((piece, squareIndex) => {
+        const coords = Utils.indexToCoordinates(squareIndex, rowIndex)
         const squareElement = Utils.createElement('div', `square square-${Utils.getSquareColor(rowIndex, squareIndex)}`, this.boardElement)
-        const square = new Square(squareElement, squareIndex, rowIndex, config.piecesID[piece], this)
+        squareElement.setAttribute("data-coords", coords)
+        const square = new Square(squareElement, squareIndex, rowIndex, coords, config.piecesID[piece], this)
         rowArray.push(square)
-
         squareElement.addEventListener('click', () => this.handleClick(square))
       })
     })
   }
 
+  getSquareFromEl(el) {
+    let squareFromEl = null
+    const coords = el.getAttribute("data-coords")
+
+    this.matrix.forEach(row => {
+      row.forEach(square => {
+        if (coords === square.coordinates) squareFromEl = square
+      })
+    })
+
+    return squareFromEl
+  }
+
   handleClick(square) {
     if (!this.clickedOnce) {
-      console.log(`${square.coordinates} | ${square.piece.color} ${square.piece.name}`)
-      if (this.turn.color !== square.piece.color) return // Don't show movepool if it's not player's turn
-      if (!square.isEmpty()) {
-
-        // Highlight legal moves(if any), and wait for new input
-        this.highlightedSquares = this.highlightLegalSquares(square)
-        if (this.highlightedSquares.length !== 0) {
-          this.clickedOnce = square
-        } else {
-          console.log(`${square.coordinates} has no legal moves.`)
-        }
-      }
+      // On first input, show moves
+      this.firstInput(square)
     } else {
+      this.secondInput(square)
+    }
+  }
+
+  secondInput(square) {
       // On a second input
       if (square.highlighted) {
-        
         // If the selected square is highlighted, play the move
         this.playMove(this.clickedOnce, square)
       }
-      
-      // Remove square highlights because move has either been played or canceled
-      this.highlightedSquares.forEach(square => {
-        square.unhighlight()
-      })
-      this.highlightedSquares = []
-      this.clickedOnce = false
+
+      // Anyways, stop showing moves for square
+      this.stopShowingMoves()
+  }
+
+  firstInput(square) {
+    console.log(`${square.coordinates} | ${square.piece.color} ${square.piece.name}`)
+    if (this.turn.color !== square.piece.color) return // Don't show movepool if it's not player's turn
+    if (!square.isEmpty()) {
+
+      // Highlight legal moves(if any), and wait for new input
+      this.highlightedSquares = this.highlightLegalSquares(square)
+      if (this.highlightedSquares.length !== 0) {
+        this.clickedOnce = square
+      } else {
+        console.log(`${square.coordinates} has no legal moves.`)
+      }
     }
   }
+
+  stopShowingMoves() {
+    // Remove highlights because current showed move has either been played or canceled
+    this.highlightedSquares.forEach(square => {
+      square.unhighlight()
+    })
+    this.highlightedSquares = []
+    this.clickedOnce = false
+    
+  }
+
+  // drag(square) {
+  //   this.firstInput(square)
+  //   const el = square.pieceElement
+  //   const size = this.boardDimension * 0.125
+
+  //   el.style.zIndex = "15"
+  //   el.style.position = "absolute"
+  //   el.style.width = `${size}px`
+  //   el.style.height = `${size}px`
+
+  //   document.addEventListener('mousemove', square.updatePos)
+  //   document.addEventListener('mouseup', square.resetPos)
+  // }
 
   playMove(departure, destination) {
     console.log(`${this.getMoveNotation(departure, destination)} has been played.`)
@@ -110,6 +152,8 @@ class Game {
 
     // If move is a pawn reaching 8th row, it becomes a queen
     destination.queenCheck()
+
+    console.log("Position score : " + this.evaluatePosition(this.turn))
 
     this.switchTurn()
   }
@@ -256,30 +300,107 @@ class Game {
       })
     })
 
-    const bestMove = this.getBestMove(legalMoves)
+    const bestMove = this.getBestMove(legalMoves, 1)
     setTimeout(() => {
       this.playMove(bestMove.departure, bestMove.destination)
     }, 10);
   }
 
-  getBestMove(moves) {
+  getBestMove(moves, depth) {
     let move = null;
-    moves.forEach(move => {
-      if (!(move.destination.isEmpty())) {
-        move.score = move.destination.piece.score - move.departure.piece.score
-      } else {
-        move.score = 0
-      }
-    });
+
+    for (let i = 0; i < depth; i++) {
+      moves.forEach(move => {
+        move.score = this.getMoveValue(move.departure, move.destination)
+      });
+    }
 
     move = moves.reduce((prev, current) => (prev.score > current.score) ? prev : current)
 
-    if (move.score <= 0) {
+    if (move.score === 0) {
       move = moves[Math.floor(Math.random()*moves.length)];
     }
     
     return move
   }
+
+  getMoveValue(departure, destination) {
+    // Play a move and return its score
+
+    const score = this.evaluatePosition(this.turn)
+
+    // Remember
+    const destinationPiece = destination.piece
+    const departurePiece = departure.piece
+
+    // Play
+    destination.piece = departurePiece
+    departure.piece = config.piecesID[0]
+
+    const newScore = this.evaluatePosition(this.turn)
+    
+    // Reset
+    destination.piece = destinationPiece
+    departure.piece = departurePiece
+
+    return newScore - score
+  }
+
+  evaluatePosition(turn) {
+    const whitePieces = this.getAllSquares(this.white)
+    const blackPieces = this.getAllSquares(this.black)
+
+    let whiteScore = 0
+    let blackScore = 0
+
+    whitePieces.forEach(square => {
+      const attackingSquares = this.getAttackingSquares(square)
+        if (turn.isWhite()) {
+          // Check for attacks
+          whiteScore += square.piece.score
+        } else {
+          // Check for attacked
+          if (attackingSquares.length >= 1) {
+            // Square is attacked and it's not my turn !
+            attackingSquares.forEach(attackingSquare => {
+              if (attackingSquare.piece.score > square.piece.score) {
+                // Piece attacking is stronger than our piece, so ignore danger
+                whiteScore += square.piece.score
+              } else {
+                // Piece attacking is weaker, so our score isn't piece.score but attackedPieceScore - piece.score
+                whiteScore += attackingSquare.piece.score - square.piece.score
+              }
+            })
+          }
+        }
+    })
+
+    blackPieces.forEach(square => {
+      const attackingSquares = this.getAttackingSquares(square)
+        if (turn.isBlack()) {
+          // Check for attacks
+          blackScore += square.piece.score
+        } else {
+          // Check for attacked
+          if (attackingSquares.length >= 1) {
+            // Square is attacked and it's not my turn !
+            attackingSquares.forEach(attackingSquare => {
+              if (attackingSquare.piece.score > square.piece.score) {
+                // Piece attacking is stronger than our piece, so ignore danger
+                blackScore += square.piece.score
+              } else {
+                // Piece attacking is weaker, so our score isn't piece.score but attackedPieceScore - piece.score
+                blackScore += attackingSquare.piece.score - square.piece.score
+              }
+            })
+          }
+        }
+    })
+
+    const score = x;
+    return score
+  }
+  
 
   highlightLegalSquares(square) {
     let legalSquares = square.getLegalSquares()
@@ -290,57 +411,6 @@ class Game {
     })
 
     return legalSquares
-  }
-
-  getKingSquare(player) {
-    let kingSquare = null
-    let i = 0
-    let j = 0
-
-    while (kingSquare === null || (i > 7)) {
-      if (i > 7) {
-        return kingSquare
-      }
-
-      const square = this.matrix[i][j]
-
-      if (square.piece.name === "king" && square.piece.color === player.color) {
-        kingSquare = square
-      }
-
-      j++
-      if (j > 7) {
-        i++
-        j = 0
-      }
-    }
-
-    return kingSquare
-  }
-
-  isAttacked(attackedSquare) {
-    let isAttacked = false
-    
-    this.matrix.forEach(row => {
-      row.forEach(square => {
-        if (!square.isEmpty() && square.isEnemyOf(attackedSquare)) {
-          const threats = square.getSquares()
-          threats.forEach(threat => {
-            if (threat.coordinates === attackedSquare.coordinates) {
-              isAttacked = true;
-            }
-          })
-        }
-      })
-    })
-
-    return isAttacked;
-
-  }
-
-  kingInCheck(player) {
-    const kingSquare = this.getKingSquare(player)
-    return (this.isAttacked(kingSquare))
   }
 }
 
