@@ -1,2 +1,2 @@
 # chess
-Chess game in JavaScript.
+Chess game in JavaScript
