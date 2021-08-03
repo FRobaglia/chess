@@ -13,48 +13,39 @@ class Square {
   }
 
   isWhite() {
-    if (this.piece.color === "white") return true
-    return false
+    return (this.piece.color === "white")
   }
 
   isBlack() {
-    if (this.piece.color === "black") return true
-    return false
+    return (this.piece.color === "black")
   }
 
   isEmpty() {
-    if (this.piece.name === "empty") return true
-    return false
+    return (this.piece.name === "empty")
   }
 
   isPawn() {
-    if (this.piece.name === "pawn") return true
-    return false
+    return (this.piece.name === "pawn")
   }
   
   isBishop() {
-    if (this.piece.name === "bishop") return true
-    return false
+    return (this.piece.name === "bishop")
   }
   
   isKnight() {
-    if (this.piece.name === "knight") return true
-    return false
+    return (this.piece.name === "knight")
   }
   
   isRook() {
-    if (this.piece.name === "rook") return true
-    return false
+    return (this.piece.name === "rook")
   }
 
   isQueen() {
-    if (this.piece.name === "queen") return true
-    return false
+    return (this.piece.name === "queen")
   }
 
   isKing() {
-    if (this.piece.name === "king") return true
-    return false
+    return (this.piece.name === "king")
   }
   
   isAllyOf(square) {

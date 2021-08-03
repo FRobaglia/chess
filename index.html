@@ -6,9 +6,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Chess</title>
   <link rel="stylesheet" href="styles/style.scss">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div id="board">
+  </div>
+
+  <div class="menu">
+    <form action="">
+      <div class="choice">
+        <label for="white">White</label>
+        <select name="white" id="white">
+          <option value="human">Player</option>
+          <option value="bot">Computer</option>
+        </select>
+      </div>
+      <div class="choice">
+        <label for="black">Black</label>
+        <select name="black" id="black">
+          <option value="human">Player</option>
+          <option selected value="bot">Computer</option>
+        </select>
+      </div>
+
+      <button type="submit">Ready</button>
+    </form>
   </div>
   <script src="scripts/main.js"></script>
 </body>

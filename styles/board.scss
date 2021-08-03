@@ -1,0 +1,106 @@
+#board {
+  display: flex;
+  flex-wrap: wrap;
+  box-shadow: 0px 6px 16px rgba(0,0,0,0.2);
+
+  &.rotate {
+    transform: rotate(180deg);
+
+    .piece {
+      transform: rotate(180deg);
+    }
+  }
+  
+}
+
+
+.square {
+  width: 12.5%;
+  height: 12.5%;
+  display: block;
+  position: relative;
+  transition: .3s ease;
+
+  // &::after {
+  //   visibility: hidden;
+  //   opacity: 0;
+  //   content: "";
+  //   position: absolute;
+  //   display: block;
+  //   top: 50%; left: 50%;
+  //   transform: translate(-50%, -50%);
+  //   width: 42.5%; height: 42.5%;
+  //   border-radius: 50%;
+  //   background: rgb(199, 93, 93);
+  //   transition: .3s opacity ease;
+  // }
+
+  // &.highlight::after {
+  //   opacity: 1;
+  //   visibility: visible;
+  // }
+
+  &.highlight {
+    cursor: pointer;
+    background: $highlight;
+  }
+}
+
+.square-white {
+  background: $squareWhite;
+}
+
+.square-black {
+  background: $squareBlack
+}
+
+.piece {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background-position: 0px 0px;
+  background-size: 600%;
+  background-image: url('../assets/images/pieces-spritesheet.svg');
+  cursor: pointer;
+
+  &.piece-empty {
+    cursor: inherit;
+  }
+}
+
+.piece-empty {
+  background-image: none;
+}
+
+.piece-white {
+  background-position-y: 0px
+}
+
+.piece-black {
+  background-position-y: 100%
+}
+
+.piece-pawn {
+  background-position-x: 100%;
+}
+
+.piece-rook {
+  background-position-x: 80%;
+}
+
+.piece-knight {
+  background-position-x: 60%;
+}
+
+.piece-bishop {
+  background-position-x: 40%;
+}
+
+.piece-queen {
+  background-position-x: 20%;
+}
+
+.piece-king {
+  background-position-x: 0;
+}

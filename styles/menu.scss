@@ -1,0 +1,51 @@
+.menu {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 6px 16px rgba(0,0,0,0.2);
+}
+
+.choice {
+  display: inline-block;
+  margin-bottom: 40px;
+
+  &:first-of-type {
+    margin-bottom: 16px;
+    margin-right: 24px;
+  }
+}
+
+select {
+  padding: 8px;
+  font-family: "Roboto";
+  border: none;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+button[type="submit"] {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: $squareBlack;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
+  font-weight: bold;
+  width: 100%;
+  text-align: center;
+  border-radius: 5px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  cursor: pointer;
+  color: white;
+  padding: 8px;
+  display: block;
+  border: none;
+}

@@ -10,6 +10,7 @@ class GraphicsManager {
   }
 
   drawBoard() {
+    this.element.innerHTML = ""
     // Creates the HTML elements to display a plain chessboard
     for (let i = 0; i < 8; i++) {
       const rowArray = []
@@ -24,8 +25,16 @@ class GraphicsManager {
       }
     }
 
+    if (!this.chessGame.blackPlayer.isBot() && this.chessGame.whitePlayer.isBot()) {
+      this.rotateBoard()
+    }
+
     this.resizeBoard()
     window.addEventListener('resize', this.resizeBoard.bind(this)) // On window resize, resize board
+  }
+
+  rotateBoard() {
+    this.element.classList.add("rotate")
   }
 
   resizeBoard() {

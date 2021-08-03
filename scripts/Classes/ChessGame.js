@@ -68,14 +68,20 @@ class ChessGame {
     this.turn = this.turn.isWhite() ? this.blackPlayer : this.whitePlayer
 
     if (this.gameIsOver()) {
+      this.end()
       console.log("Fin de la partie.")
     } else {
-      
       if (this.turn.isBot()) {
-        this.playBestMove() // TODO: IA
+        this.playBestMove()
       }
 
     }
+  }
+
+  end() {
+    setTimeout(() => {
+      new ChessGame(config.gameConfig)
+    }, 3000);
   }
 
   gameIsOver() {
@@ -118,8 +124,9 @@ class ChessGame {
     const rand = legalMoves[Math.floor(Math.random()*legalMoves.length)]
 
     setTimeout(() => {
+      console.log(1)
       this.playMove(rand[0], rand[1])
-    }, 10);
+    }, 100);
   }
 
   hasLegalSquares(player) {
